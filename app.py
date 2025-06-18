@@ -29,7 +29,7 @@ if "history" not in st.session_state:
 def load_lottie(filepath: str):
     with open(filepath, "r", errors="ignore") as f:
         return json.load(f)
-lottie_rec = load_lottie("app_assets\Animation - 1750138096117.json")
+lottie_rec = load_lottie("Animation_Object.json")
 
 # Mode selection input
 mode = st.pills("Choose how you want to *Interview* **Souvik** (input modes):", ["🗣️ Speech / Record", "✍️ Text"], label_visibility="visible", selection_mode="single")
