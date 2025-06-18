@@ -1,0 +1,16 @@
+streamlit
+streamlit-lottie
+streamlit-mic-recorder
+groq
+pydub
+uuid
+python-dotenv
+
+# streamlit-webrtc
+# scipy
+# soundfile
+# openai
+# whisper
+# openai-whisper
+# transformers
+# torchaudio
