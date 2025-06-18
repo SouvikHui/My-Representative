@@ -2,11 +2,14 @@
 import os
 from pydub import AudioSegment
 from uuid import uuid4
-from groq import Groq
+from elevenlabs.client import ElevenLabs
+from dotenv import load_dotenv
 from dotenv import load_dotenv
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+elevenlabs = ElevenLabs(
+    api_key=os.getenv("ELEVENLAB_API_KEY"),
+)
 
 # Due to rate limit in speech generation in cloud environmnt,
 # we have to split the the entire generated output text 
@@ -25,28 +28,28 @@ def split_text(text, max_chars=1000):
         chunks.append(text)
     return chunks
 
-def synthesize_speech(text: str, voice: str = "Quinn-PlayAI"):
+def synthesize_speech(text: str, voice_id: str = "29vD33N1CtxCmqQRPOHJ"):
     chunks = split_text(text)
     output_files = []
 
     for i, chunk in enumerate(chunks):
-        response = client.audio.speech.create(
-            model="playai-tts",
-            voice=voice,
-            input=chunk,
-            response_format="wav"
-        )
-        path = f"chunk_{uuid4()}_{i}.wav"
-        response.write_to_file(path)
+        audio = b"".join(elevenlabs.text_to_speech.convert(
+            text=chunk,
+            voice_id=voice_id,
+            model_id="eleven_flash_v2_5",
+            output_format="mp3_44100_128",
+        ))
+        path = f"chunk_{uuid4().hex}_{i}.mp3"
+        with open(path, "wb") as f:
+            f.write(audio)
         output_files.append(path)
 
-    # Merge all chunks using pydub
+    # Merge MP3 chunks
     final_audio = AudioSegment.empty()
     for path in output_files:
-        audio = AudioSegment.from_wav(path)
-        final_audio += audio
+        final_audio += AudioSegment.from_mp3(path)
         os.remove(path)
 
-    final_path = f"final_{uuid4()}.wav"
-    final_audio.export(final_path, format="wav")
+    final_path = f"final_{uuid4().hex}.mp3"
+    final_audio.export(final_path, format="mp3")
     return final_path
