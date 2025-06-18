@@ -4,29 +4,11 @@ from pydub import AudioSegment
 from uuid import uuid4
 from elevenlabs.client import ElevenLabs
 from dotenv import load_dotenv
-from dotenv import load_dotenv
 
 load_dotenv()
 elevenlabs = ElevenLabs(
     api_key=os.getenv("ELEVENLAB_API_KEY"),
 )
-
-# Due to rate limit in speech generation in cloud environmnt,
-# we have to split the the entire generated output text 
-def split_text(text, max_chars=1000):
-    chunks = []
-    while len(text) > max_chars:
-        # Split at sentence or word boundary
-        split_at = text.rfind(".", 0, max_chars)
-        if split_at == -1:
-            split_at = text.rfind(" ", 0, max_chars)
-        if split_at == -1:
-            split_at = max_chars  # hard cut if no delimiter
-        chunks.append(text[:split_at].strip())
-        text = text[split_at:].strip()
-    if text:
-        chunks.append(text)
-    return chunks
 
 def synthesize_speech(text: str, voice_id: str = "29vD33N1CtxCmqQRPOHJ"):
     audio = b"".join(elevenlabs.text_to_speech.convert(
@@ -39,6 +21,32 @@ def synthesize_speech(text: str, voice_id: str = "29vD33N1CtxCmqQRPOHJ"):
     with open(path, "wb") as f:
         f.write(audio)
     return path
+
+
+
+
+
+
+
+# Due to rate limit in speech generation in cloud environmnt,
+# we have to split the the entire generated output text 
+# def split_text(text, max_chars=1000):
+#     chunks = []
+#     while len(text) > max_chars:
+#         # Split at sentence or word boundary
+#         split_at = text.rfind(".", 0, max_chars)
+#         if split_at == -1:
+#             split_at = text.rfind(" ", 0, max_chars)
+#         if split_at == -1:
+#             split_at = max_chars  # hard cut if no delimiter
+#         chunks.append(text[:split_at].strip())
+#         text = text[split_at:].strip()
+#     if text:
+#         chunks.append(text)
+#     return chunks
+
+## With Chunking
+# def synthesize_speech(text: str, voice_id: str = "29vD33N1CtxCmqQRPOHJ"):
     # chunks = split_text(text)
     # output_files = []
 
