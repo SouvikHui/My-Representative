@@ -29,27 +29,39 @@ def split_text(text, max_chars=1000):
     return chunks
 
 def synthesize_speech(text: str, voice_id: str = "29vD33N1CtxCmqQRPOHJ"):
-    chunks = split_text(text)
-    output_files = []
+    audio = b"".join(elevenlabs.text_to_speech.convert(
+        text=text,
+        voice_id=voice_id,
+        model_id="eleven_flash_v2_5",
+        output_format="mp3_44100_128"
+    ))
+    path = f"final_{uuid4().hex}.mp3"
+    with open(path, "wb") as f:
+        f.write(audio)
+    return path
+    # chunks = split_text(text)
+    # output_files = []
 
-    for i, chunk in enumerate(chunks):
-        audio = b"".join(elevenlabs.text_to_speech.convert(
-            text=chunk,
-            voice_id=voice_id,
-            model_id="eleven_flash_v2_5",
-            output_format="mp3_44100_128",
-        ))
-        path = f"chunk_{uuid4().hex}_{i}.mp3"
-        with open(path, "wb") as f:
-            f.write(audio)
-        output_files.append(path)
+    # for i, chunk in enumerate(chunks):
+    #     audio = b"".join(elevenlabs.text_to_speech.convert(
+    #         text=chunk,
+    #         voice_id=voice_id,
+    #         model_id="eleven_flash_v2_5",
+    #         output_format="mp3_44100_128",
+    #     ))
+    #     path = f"chunk_{uuid4().hex}_{i}.mp3"
+    #     with open(path, "wb") as f:
+    #         f.write(audio)
+    #     output_files.append(path)
 
-    # Merge MP3 chunks
-    final_audio = AudioSegment.empty()
-    for path in output_files:
-        final_audio += AudioSegment.from_mp3(path)
-        os.remove(path)
+    # # Merge MP3 chunks
+    # final_audio = AudioSegment.empty()
+    # for path in output_files:
+    #     final_audio += AudioSegment.from_mp3(path)
+    #     os.remove(path)
 
-    final_path = f"final_{uuid4().hex}.mp3"
-    final_audio.export(final_path, format="mp3")
-    return final_path
+    # final_path = f"final_{uuid4().hex}.mp3"
+    # final_audio.export(final_path, format="mp3")
+    # return final_path
+
+    
