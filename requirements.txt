@@ -4,6 +4,7 @@ streamlit-mic-recorder
 groq
 elevenlabs
 pydub
+ffmpeg-python
 uuid
 python-dotenv
 
