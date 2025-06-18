@@ -2,6 +2,7 @@ streamlit
 streamlit-lottie
 streamlit-mic-recorder
 groq
+elevenlabs
 pydub
 uuid
 python-dotenv
